@@ -1,0 +1,108 @@
+version: '3'
+
+services:
+  gateway:
+    restart: on-failure
+    container_name: gateway
+    build: ./gateway
+    ports:
+     - "8080:8080"
+    env_file:
+     - ./gateway/.env  
+    depends_on:
+      - task
+      - user
+    networks:
+      - my_network
+
+  user:
+    restart: on-failure
+    container_name: user
+    build: ./user
+    env_file:
+      - ./user/.env
+    depends_on:
+      - db_users
+    networks:
+      - my_network
+
+  task:
+    restart: on-failure
+    container_name: task
+    build: ./task
+    env_file:
+      - ./task/.env
+    depends_on:
+      - db_tasks
+    networks:
+      - my_network                  
+
+  db_users:
+    image: postgres
+    restart: on-failure
+    volumes:
+      - ./db/db_users:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_USERS_NAME}
+    ports:
+      - "5433:5432"  
+    networks:
+      - my_network
+
+  db_tasks:
+    image: postgres
+    restart: on-failure
+    volumes:
+      - ./db/db_tasks:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}      
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_TASKS_NAME}
+    ports:
+      - "5432:5432"  
+    networks:
+      - my_network
+
+  migrator_users:
+    restart: on-failure
+    image: migrate/migrate
+    volumes:
+      - ./user/migrations:/migrations
+    entrypoint: 
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_USERS_HOST}:${DB_PORT}/${DB_USERS_NAME}?sslmode=disable",
+      ]
+    command: ["up"]  
+    depends_on:
+      - db_users
+    networks:
+      - my_network
+
+  migrator_tasks:
+    restart: on-failure
+    image: migrate/migrate
+    volumes:
+      - ./task/migrations:/migrations
+    entrypoint: 
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_TASKS_HOST}:${DB_PORT}/${DB_TASKS_NAME}?sslmode=disable",
+      ]
+    command: ["up"]  
+    depends_on:
+      - db_tasks
+    networks:
+      - my_network    
+
+networks:
+  my_network:
+    driver: bridge

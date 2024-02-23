@@ -1,0 +1,272 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Documentation of TaskService API.",
+    "title": "TaskService.",
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/tasks": {
+      "post": {
+        "tags": [
+          "task"
+        ],
+        "summary": "Добавить задание.",
+        "operationId": "CreateTaskRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateTaskRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateTaskResponse"
+          }
+        }
+      }
+    },
+    "/api/tasks/{userId}": {
+      "get": {
+        "tags": [
+          "task"
+        ],
+        "summary": "Получить список заданий пользователя по его ID.",
+        "operationId": "ListRequest",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "UserID",
+            "description": "ID пользователя.",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ListResponse"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Добавить пользователя.",
+        "operationId": "CreateRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateResponse"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Получить пользователя по ID.",
+        "operationId": "ProfileRequest",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "ID пользователя.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ProfileResponse"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/tasks/{taskId}": {
+      "delete": {
+        "tags": [
+          "task"
+        ],
+        "summary": "Удалить задание.",
+        "operationId": "DeleteRequest",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "UserID",
+            "description": "ID пользователя.",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "TaskID",
+            "description": "ID задания.",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "Code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Message": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "projects/LDmitryLD/task-service/gateway/internal/models"
+    },
+    "CreateRequest": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "LastName": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "projects/LDmitryLD/task-service/gateway/internal/modules/user/controller"
+    },
+    "CreateTaskRequest": {
+      "type": "object",
+      "properties": {
+        "Description": {
+          "type": "string"
+        },
+        "TaskName": {
+          "type": "string"
+        },
+        "UserID": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "x-go-package": "projects/LDmitryLD/task-service/gateway/internal/modules/task/controller"
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "Description": {
+          "type": "string"
+        },
+        "TaskID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "TaskName": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "projects/LDmitryLD/task-service/gateway/internal/models"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "LastName": {
+          "type": "string"
+        },
+        "Tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          }
+        }
+      },
+      "x-go-package": "projects/LDmitryLD/task-service/gateway/internal/models"
+    }
+  },
+  "responses": {
+    "CreateResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ApiResponse"
+      }
+    },
+    "CreateTaskResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ApiResponse"
+      }
+    },
+    "DeleteResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ApiResponse"
+      }
+    },
+    "ListResponse": {
+      "description": "",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Task"
+        }
+      }
+    },
+    "ProfileResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/User"
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "basic"
+    }
+  }
+}
