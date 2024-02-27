@@ -41,7 +41,7 @@ services:
     image: postgres
     restart: on-failure
     volumes:
-      - ./db/db_users:/var/lib/postgresql/data
+      - ./db_task_service/db_users:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_USER: ${DB_USER}
@@ -55,7 +55,7 @@ services:
     image: postgres
     restart: on-failure
     volumes:
-      - ./db/db_tasks:/var/lib/postgresql/data
+      - ./db_task_service/db_tasks:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}      
       POSTGRES_USER: ${DB_USER}
